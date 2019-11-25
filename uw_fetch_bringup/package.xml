@@ -1,0 +1,19 @@
+<package format="2">
+  <name>uw_fetch_bringup</name>
+  <version>0.1.0</version>
+  <description>
+    Top-level ROS launch scripts for the Homeskies RoboCup@Home team.
+  </description>
+
+  <license>BSD</license>
+
+  <maintainer email="robocup@cs.washington.edu">UW RoboCup Contributors</maintainer>
+  <author email="robocup@cs.washington.edu">UW RoboCup Contributors</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>astro_description</exec_depend>
+  <exec_depend>fake_localization</exec_depend>
+  <test_depend>roslaunch</test_depend>
+
+</package>

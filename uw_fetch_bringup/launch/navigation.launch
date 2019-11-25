@@ -1,0 +1,52 @@
+<launch>
+  <arg name="initial_pose_x" default="0"/>
+  <arg name="initial_pose_y" default="0"/>
+  <arg name="initial_pose_yaw" default="0"/>
+  <!-- Navigation requires at least one map.
+       In addition, it is sometimes desirable to have a "keepout" map
+       which is used for costmaps, but not localization -->
+  <arg name="map_file" />
+  <arg name="map_keepout_file" default="" />
+  <arg name="use_keepout" default="false" />
+  <arg name="use_fake_localization" default="false" />
+
+
+  <!-- serve up a map -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+  <!-- serve up a map with keepout zones -->
+  <group if="$(arg use_keepout)" >
+    <node name="map_keepout_server" pkg="map_server" type="map_server" args="$(arg map_keepout_file)" >
+      <remap from="map" to="map_keepout" />
+      <remap from="static_map" to="static_map_keepout" />
+    </node>
+  </group>
+
+  <!-- localize the robot -->
+  <group if="$(arg use_fake_localization)">
+    <node name="fake_localization" pkg="fake_localization" type="fake_localization">
+      <remap from="base_pose_ground_truth" to="odom"/>
+      <param name="delta_x" value="$(arg initial_pose_x)"/>
+      <param name="delta_y" value="$(arg initial_pose_y)"/>
+      <param name="delta_yaw" value="$(arg initial_pose_yaw)"/>
+    </node>
+  </group>
+  <group unless="$(arg use_fake_localization)">
+    <include file="$(find uw_fetch_bringup)/launch/include/amcl.launch.xml" >
+      <arg name="use_map_topic" value="true" />
+      <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
+      <arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
+      <arg name="initial_pose_yaw" value="$(arg initial_pose_yaw)"/>
+    </include>
+  </group>
+
+  <!-- move the robot -->
+  <include file="$(find fetch_navigation)/launch/include/move_base.launch.xml" >
+    <arg name="name" value="fetch" />
+    <arg if="$(arg use_keepout)" name="map_topic" value="map_keepout" />
+  </include>
+
+  <!-- tilt the head -->
+  <node pkg="fetch_navigation" type="tilt_head.py" name="tilt_head_node" />
+
+</launch>
