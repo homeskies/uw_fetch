@@ -13,6 +13,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <exec_depend>fetch_description</exec_depend>
+  <exec_depend>realsense2_description</exec_depend>
   <exec_depend>urdf</exec_depend>
   <exec_depend>xacro</exec_depend>
 </package>
