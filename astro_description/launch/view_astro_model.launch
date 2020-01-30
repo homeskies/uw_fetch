@@ -1,5 +1,5 @@
 <launch>
-    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find astro_description)/robots/astro.xacro'" />
+    <param name="robot_description" command="$(find xacro)/xacro  '$(find astro_description)/robots/astro.xacro'" />
 
 
     <!-- send fake joint values -->
