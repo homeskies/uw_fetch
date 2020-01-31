@@ -4,7 +4,7 @@ project(astro_description)
 find_package(catkin)
 catkin_package()
 
-install(DIRECTORY meshes
+install(DIRECTORY urdf
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
