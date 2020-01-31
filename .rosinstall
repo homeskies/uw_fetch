@@ -1,0 +1,3 @@
+- git:
+    local-name: realsense_ros
+    uri: ssh://git@github.com:IntelRealSense/realsense-ros.git
