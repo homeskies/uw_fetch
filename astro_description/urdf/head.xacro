@@ -2,6 +2,12 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="head">
     <xacro:include filename="$(find realsense2_description)/urdf/_d415.urdf.xacro"/>
 
+    <material name="ABS/IVR">
+        <color rgba="0.9 0.88 0.81 1"/>
+    </material>
+    <material name="ABS/BLK">
+        <color rgba="0.2 0.2 0.2 1"/>
+    </material>
     <xacro:macro name="head">
 
         <link name="head_pan_link">
@@ -58,9 +64,7 @@
                 <geometry>
                     <mesh filename="package://astro_description/meshes/xavier_mount.stl"/>
                 </geometry>
-                <material name="">
-                    <color rgba="0.2 0.2 0.2 1"/>
-                </material>
+                <material name="ABS/BLK"/>
             </visual>
             <collision>
                 <origin rpy="0 0 0" xyz="-0.05 -0.0625 0.01"/>
@@ -118,9 +122,7 @@
                 <geometry>
                     <mesh filename="package://astro_description/meshes/display_mount.stl"/>
                 </geometry>
-                <material name="">
-                    <color rgba="0.2 0.2 0.16 1"/>
-                </material>
+                <material name="ABS/BLK"/>
             </visual>
             <collision>
                 <origin rpy="0 0 0" xyz="-.08 -.08 .09"/>
@@ -147,9 +149,7 @@
                 <geometry>
                     <mesh filename="package://astro_description/meshes/head_display.stl"/>
                 </geometry>
-                <material name="">
-                    <color rgba="0.2 0.2 0.2 1"/>
-                </material>
+                <material name="ABS/BLK"/>
             </visual>
             <collision>
                 <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -163,6 +163,27 @@
             <origin rpy="1.0472 0.0 1.56" xyz="-0.05 -0.063 0.095"/>
             <parent link="head_display_mount"/>
             <child link="head_display"/>
+        </joint>
+
+        <link name="head_display_screen">
+            <inertial>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <mass value="1.0"/>
+                <inertia ixx="0.0129" ixy="0.0002" ixz="0.0007" iyy="0.0095" iyz="-0.0" izz="0.0184"/>
+            </inertial>
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <box size="0.2 0.12 0.001"/>
+                </geometry>
+                <material name="ABS/BLK"/>
+            </visual>
+        </link>
+
+        <joint name="head_display_screen_joint" type="fixed">
+            <origin rpy="0 0 0" xyz="0 0.007 0.0105"/>
+            <parent link="head_display"/>
+            <child link="head_display_screen"/>
         </joint>
 
         <link name="head_tilt_link">
@@ -258,9 +279,7 @@
                 <geometry>
                     <mesh filename="package://astro_description/meshes/head_external_camera_mount.stl"/>
                 </geometry>
-                <material name="">
-                    <color rgba="0.20 0.20 0.20 1"/>
-                </material>
+                <material name="ABS/BLK"/>
             </visual>
             <collision>
                 <origin rpy="0 0 0" xyz="0 -0.02 0"/>
@@ -276,8 +295,8 @@
             <child link="head_external_camera_mount"/>
         </joint>
 
-        <xacro:arg name="use_nominal_extrinsics" default="True"/>
-        <sensor_d415 name="head_external_camera" parent="head_external_camera_mount" use_nominal_extrinsics="true">
+        <xacro:arg name="use_nominal_extrinsics" default="true"/>
+        <sensor_d415 name="head_external_camera" parent="head_external_camera_mount">
             <origin xyz="0.025 -0.025 0.003" rpy="0 0 0"/>
         </sensor_d415>
 
@@ -293,9 +312,7 @@
                 <geometry>
                     <mesh filename="package://astro_description/meshes/mic_mount.stl"/>
                 </geometry>
-                <material name="">
-                    <color rgba="0.20 0.20 0.20 1"/>
-                </material>
+                <material name="ABS/BLK"/>
             </visual>
             <collision>
                 <origin rpy="0 0 0" xyz="-0.01 0 0.02"/>
@@ -322,9 +339,7 @@
                 <geometry>
                     <mesh filename="package://astro_description/meshes/mic.stl"/>
                 </geometry>
-                <material name="">
-                    <color rgba="0.20 0.20 0.20 1"/>
-                </material>
+                <material name="ABS/BLK"/>
             </visual>
             <collision>
                 <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -351,9 +366,7 @@
                 <geometry>
                     <mesh filename="package://astro_description/meshes/mic_shell.stl"/>
                 </geometry>
-                <material name="">
-                    <color rgba="0.90 0.88 0.81 1"/>
-                </material>
+                <material name="ABS/IVR"/>
             </visual>
             <collision>
                 <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -364,9 +377,9 @@
         </link>
 
         <joint name="mic_shell_joint" type="fixed">
-            <origin rpy="0 0 0" xyz="0.0 0.0 0.0" />
-            <parent link="head_mic_mount" />
-            <child link="mic_shell" />
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <parent link="head_mic_mount"/>
+            <child link="mic_shell"/>
         </joint>
 
 
