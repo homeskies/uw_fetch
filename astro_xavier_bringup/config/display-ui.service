@@ -1,0 +1,13 @@
+# Install under login user at ~/.config/systemd/user/
+# Then systemctl --user enable display-ui
+
+[Unit]
+Description=Job that launches head UI once the system has started
+PartOf=graphical-session.target
+
+[Install]
+WantedBy=graphical-session.target
+
+[Service]
+Restart=on-failure
+ExecStart=/bin/bash -c "/home/robocup/workspaces/boot_ws/src/uw_fetch/astro_xavier_bringup/scripts/display_ui_bringup.sh"
