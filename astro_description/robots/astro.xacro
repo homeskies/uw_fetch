@@ -9,10 +9,10 @@
     <xacro:include filename="$(find astro_description)/urdf/arm.xacro"/>
     <xacro:include filename="$(find astro_description)/urdf/gripper.xacro"/>
 
-    <base/>
-    <body/>
-    <head/>
-    <arm/>
-    <gripper/>
+    <xacro:base/>
+    <xacro:body/>
+    <xacro:head/>
+    <xacro:arm/>
+    <xacro:gripper/>
 
 </robot>
