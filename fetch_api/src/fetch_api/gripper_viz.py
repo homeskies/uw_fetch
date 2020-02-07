@@ -6,7 +6,8 @@ GRIPPER_MESH = 'package://fetch_description/meshes/gripper_link.dae'
 L_FINGER_MESH = 'package://fetch_description/meshes/l_gripper_finger_link.STL'
 R_FINGER_MESH = 'package://fetch_description/meshes/r_gripper_finger_link.STL'
 
-MIN_DISTANCE = 0.0131 # Distance between fingers when gripper is closed
+MIN_DISTANCE = 0.0131  # Distance between fingers when gripper is closed
+
 
 def gripper_interactive_marker(pose_stamped, finger_distance):
     gripper_marker = Marker()

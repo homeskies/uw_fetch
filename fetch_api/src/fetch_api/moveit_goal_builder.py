@@ -1,10 +1,8 @@
-from geometry_msgs.msg import *
 from moveit_msgs.msg import (Constraints, JointConstraint, PositionConstraint,
                              OrientationConstraint, BoundingVolume)
-from moveit_msgs.msg import MoveGroupAction, MoveGroupGoal
+from moveit_msgs.msg import MoveGroupGoal
 from shape_msgs.msg import SolidPrimitive
 from tf.listener import TransformListener
-import actionlib
 import copy
 import moveit_msgs.msg
 import rospy
@@ -171,7 +169,7 @@ class MoveItGoalBuilder(object):
             goal.request.goal_constraints.append(c1)
 
         # Set path constraints
-        goal.request.path_constraints.orientation_constraints = self._orientation_constraints 
+        goal.request.path_constraints.orientation_constraints = self._orientation_constraints
 
         # Set trajectory constraints
 

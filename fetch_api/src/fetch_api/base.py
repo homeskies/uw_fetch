@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 
-import actionlib
 import copy
 import geometry_msgs.msg
 import math
