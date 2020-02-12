@@ -5,13 +5,15 @@ on: [push, pull_request]
 jobs:
   industrial_ci:
     env:
+      AFTER_SCRIPT: 'cd $target_ws && rosenv && catkin build $(catkin_topological_order "${TARGET_REPO_PATH}" --only-names) --no-deps --no-status --verbose --make-args roslint'
       CATKIN_LINT: true
+      ROS_DISTRO: melodic
       ROS_REPO: main
       UPSTREAM_WORKSPACE: .rosinstall
     strategy:
       matrix:
         env:
-          - {ROS_DISTRO: melodic}
+          - {}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -27,7 +29,7 @@ jobs:
         python-version: 2.7
     - name: Install dependencies
       run: |
-        pip install flake8
+        pip install flake8 pep8-naming
     - name: Lint
       run: |
         flake8 -v
