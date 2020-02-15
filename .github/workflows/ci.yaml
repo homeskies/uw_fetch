@@ -7,11 +7,8 @@ jobs:
     env:
       AFTER_SCRIPT: 'cd $target_ws &&
       rosenv &&
-      pkgs=$(catkin_topological_order "${TARGET_REPO_PATH}" --only-names)  &&
-      declare -A exclude &&
-      exclude[astro_description]=1 &&
-      pkgs=($(for pkg in $pkgs; do if [[ ! ${exclude[$pkg]} ]]; then echo $pkg; fi; done)) &&
-      catkin build  ${pkgs} --no-deps --no-status --verbose --make-args roslint'
+      pkgs=(fetch_api ) &&
+      catkin build  ${pkgs[*]} --no-deps --no-status --verbose --make-args roslint'
       CATKIN_LINT: true
       ROS_DISTRO: melodic
       ROS_REPO: main
