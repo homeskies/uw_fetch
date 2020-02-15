@@ -1,8 +1,10 @@
 #! /usr/bin/env python
 
+import actionlib
 import copy
 import geometry_msgs.msg
 import math
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 import nav_msgs.msg
 import numpy as np
 import rospy
@@ -24,14 +26,15 @@ class Base(object):
     """
 
     def __init__(self):
-        self._publisher = rospy.Publisher(
+        self._velocity_publisher = rospy.Publisher(
             'cmd_vel', geometry_msgs.msg.Twist, queue_size=5)
-        self.odom_sub = rospy.Subscriber(
+        self._odom_sub = rospy.Subscriber(
             'odom',
             nav_msgs.msg.Odometry,
             callback=self._odom_callback,
             queue_size=10)
         self.odom = None
+        self._move_base_client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
 
     def move(self, linear_speed, angular_speed):
         """Moves the base instantaneously at given linear and angular speeds.
@@ -48,7 +51,21 @@ class Base(object):
         twist = geometry_msgs.msg.Twist()
         twist.linear.x = linear_speed
         twist.angular.z = angular_speed
-        self._publisher.publish(twist)
+        self._velocity_publisher.publish(twist)
+
+    def navigate_to(self, x, y, theta):
+        goal = MoveBaseGoal()
+        goal.target_pose.header.frame_id = 'map'
+        goal.target_pose.header.stamp = rospy.Time().now()
+        goal.target_pose.pose.position.x = x
+        goal.target_pose.pose.position.y = y
+        goal.target_pose.pose.position.y = y
+        goal.target_pose.pose.orientation = tft.quaternion_from_euler(math.radians(theta), 0, 0)
+        self._move_base_client.send_goal(goal)
+
+    def wait_for_navigation_result(self):
+        self._move_base_client.wait_for_result()
+        return self._move_base_client.get_result()
 
     def go_forward(self, distance, speed=0.1):
         """Moves the robot a certain distance.
@@ -124,7 +141,7 @@ class Base(object):
         end_coord = (current_coord + angular_distance) % (2 * math.pi)
         rate = rospy.Rate(25)
 
-        while True:
+        while not rospy.is_shutdown():
             current_coord = self._yaw_from_quaternion(
                 self.odom.orientation) % (2 * math.pi)
             remaining = (direction *
