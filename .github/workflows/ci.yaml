@@ -5,7 +5,13 @@ on: [push, pull_request]
 jobs:
   industrial_ci:
     env:
-      AFTER_SCRIPT: 'cd $target_ws && rosenv && catkin build $(catkin_topological_order "${TARGET_REPO_PATH}" --only-names) --no-deps --no-status --verbose --make-args roslint'
+      AFTER_SCRIPT: 'cd $target_ws &&
+      rosenv &&
+      pkgs=$(catkin_topological_order "${TARGET_REPO_PATH}" --only-names)  &&
+      declare -A exclude &&
+      exclude[astro_description]=1 &&
+      pkgs=($(for pkg in $pkgs; do if [[ ! ${exclude[$pkg]} ]]; then echo $pkg; fi; done)) &&
+      catkin build  ${pkgs} --no-deps --no-status --verbose --make-args roslint'
       CATKIN_LINT: true
       ROS_DISTRO: melodic
       ROS_REPO: main
