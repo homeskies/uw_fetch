@@ -60,7 +60,11 @@ class Base(object):
         goal.target_pose.pose.position.x = x
         goal.target_pose.pose.position.y = y
         goal.target_pose.pose.position.y = y
-        goal.target_pose.pose.orientation = tft.quaternion_from_euler(math.radians(theta), 0, 0)
+        quaternion = tft.quaternion_from_euler(math.radians(theta), 0, 0)
+        goal.target_pose.pose.orientation.x = quaternion[0]
+        goal.target_pose.pose.orientation.y = quaternion[1]
+        goal.target_pose.pose.orientation.z = quaternion[2]
+        goal.target_pose.pose.orientation.w = quaternion[3]
         self._move_base_client.send_goal(goal)
 
     def wait_for_navigation_result(self):
