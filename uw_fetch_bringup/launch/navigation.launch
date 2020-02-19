@@ -12,7 +12,7 @@
 
 
   <!-- serve up a map -->
-  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" required="true" />
 
   <!-- serve up a map with keepout zones -->
   <group if="$(arg use_keepout)" >
@@ -41,8 +41,7 @@
   </group>
 
   <!-- move the robot -->
-  <include file="$(find fetch_navigation)/launch/include/move_base.launch.xml" >
-    <arg name="name" value="fetch" />
+  <include file="$(find uw_fetch_bringup)/launch/include/move_base.launch.xml" >
     <arg if="$(arg use_keepout)" name="map_topic" value="map_keepout" />
   </include>
 
