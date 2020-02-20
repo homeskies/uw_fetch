@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+###
+# Keeps the current workspace synced with a remote workspace
+###
+# Check prereqs
+# Is inotifytools installed?
+readonly PROGNAME=$(basename $0)
+
+hash inotifywait 2>/dev/null || { echo >&2 "$PROGNAME requires inotifywait but it's not installed. Run sudo apt install inotify-tools"; exit 1; }
+
+function usage {
+cat <<- EOF
+usage: $PROGNAME hostname remote_user remote_path
+Copies your currently sourced workspace's src directory into the remote_path.
+If \$REMOTE_WORKSPACE is set, remote_path will automatically
+point to "~/workspaces/\$REMOTE_WORKSPACE"
+EOF
+    exit 1
+}
+
+# Too few arguments
+if [[ $# -lt 2 ]] ; then
+    usage
+    exit 1
+fi
+
+remote_hostname=$1
+remote_user=$2
+remote_path=$3
+
+if [[ -z "$remote_path" && -n "$REMOTE_WORKSPACE" ]]; then
+    remote_path="~/workspaces/$REMOTE_WORKSPACE/src/"
+fi
+
+# Are there all the arguments
+if [[ -z "$remote_hostname" ]] ||
+    [[ -z "$remote_user" ]]    ||
+    [[ -z "$remote_path" ]]; then
+    usage
+    exit 1
+fi
+
+# Trailing slash is important. Causes rsync to copy the contents of the directory,
+# and not the directory itself.
+local_path="$(whichws)/src/"
+if [[ -z "$local_path" || ! -d "$local_path" ]]; then
+    echo "Couldn't find current workspace"
+    exit 1
+fi
+
+if [[ -z "$remote_user" ]]; then
+    remote_user=$ROBOT_USERNAME
+fi
+
+# Do an initial transfer with a silent configuration so we don't dump out hundreds of file names
+# Follow symlinks
+uwcp "$local_path" "$remote_path" -h "$remote_hostname" -u "$remote_user" --exclude-common --replace-dest -- -L $custom_excludes
+return_code=$?
+if [[ ! $return_code -eq 0 ]]; then
+    >&2 echo "Copy failed. Please check your parameters"
+    exit $return_code
+fi
+
+# Have to cut down on the number of directories we try to watch because we have a finite number
+# of inotify handles
+# TODO: Make this only search from the absolute path to the workspace root
+function get_included {
+    # Get things that are directories, then prune them if the match the name. If that doesn't work, try the other
+    # side of the or (-o), which succeeds iff the path is a directory (so, filter out files). Print lines that are true
+    local included=$(find $local_path -type d \( -name .idea -o -name .git -o -name cmake-build-debug -o -name build \) -prune -o -type d -print)
+    # Wrap each line in quotes to handle weird characters in paths
+    #sed -e 's/^\|$/"/g' <<<"$PWD"
+    echo $included
+}
+# Have to put escaped quotes around remote path or else bash will interpret any `~` relative paths locally
+while true; do
+    echo -e "Waiting for changes"
+    # Block until something in the file system changes
+    inotifywait -e modify -e attrib -e close_write -e move -e move_self -e create -e delete -e delete_self -qq $(get_included)
+    exit_code=$?
+    if [[ $exit_code != 0 ]]; then
+        num_dirs=$(get_included | wc -l)
+        >&2 echo "Something went wrong while trying to monitor $num_dirs directories."
+        >&2 echo "inotifywait returned unexpected code $exit_code. Exiting."
+        break
+    fi
+    # Silence the overall progress bar
+    uwcp "$local_path" "$remote_path" -h "$remote_hostname" -u "$remote_user" --exclude-common --replace-dest --no-progress -- -v -L
+    return_code=$?
+    if [[ ! $return_code -eq 0 ]]; then
+        >&2 echo "Copy failed. Please check your parameters"
+        exit $return_code
+    fi
+
+done
