@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+###
+# Generates an SSH key and authorizes it with the robot's accounts.
+# If you would like to use an existing key, please explicitly symlink it to the name in $ROBOT_KEYNAME
+###
+
+if ! check_connection_to_robot --remote-only; then
+    >&2 echo "Could not connect to the robot."
+    exit 1
+fi
+
+keypath="$HOME/.ssh/$ROBOT_KEYNAME"
+# The user may have made this key a symlink, so we'll resolve the link before attempting to copy
+real_privpath="$(readlink -f $keypath)"
+real_pubpath="$(readlink -f $keypath.pub)"
+
+# Create a key for working with the robot if it doesn't already exist
+if [[ ! -f "$keypath" || ! -f "$keypath.pub" ]]; then
+    echo "Generating new SSH key at $keypath..."
+    # ED25519 keys don't work with gnome-keyring, so we're stuck with RSA here
+    ssh-keygen -t rsa -b 4096 -f "$keypath"
+    ssh-add "$keypath"
+fi
+
+# A little helper to set up a key for arbitrary user and hostname
+function cp_pub_and_authorize_with {
+    local username="$1"
+    local hostname="$2"
+    local jump_username="$3"
+    local jump_hostname="$4"
+    if [[ -n "$jump_username" && -n "$jump_hostname" ]]; then
+        ssh-copy-id -i "$real_privpath" -o "ProxyCommand=ssh -W %h:%p $jump_username@$jump_hostname" "$username@$hostname" 1> /dev/null
+        # Place the public key with the correct name and permissions
+        # Having the public key on the robot in a specific file lets us easily specify which key we want to use from a forwarded agent.
+        rsync --chmod=644 -e "ssh -J $jump_username@$jump_hostname" "$real_pubpath" "$username@$hostname:~/.ssh/$ROBOT_KEYNAME.pub"
+    else
+        ssh-copy-id -i "$real_privpath" "$username@$hostname" 1> /dev/null
+        # Place the public key with the correct name and permissions
+        # Having the public key on the robot in a specific file lets us easily specify which key we want to use from a forwarded agent.
+        rsync --chmod=644 "$real_pubpath"  "$username@$hostname:~/.ssh/$ROBOT_KEYNAME.pub"
+    fi
+
+}
+
+# Authorize keys and discard stdout
+echo "Copying to fetch on $ROBOT_NAME..."
+cp_pub_and_authorize_with "$ROBOT_USERNAME" "$ROBOT_HOSTNAME"
+
+echo "Copying to robocup on $EXTERNAL_COMPUTER_HOSTNAME via $ROBOT_HOSTNAME..."
+cp_pub_and_authorize_with robocup "$EXTERNAL_COMPUTER_HOSTNAME" "$ROBOT_USERNAME" $ROBOT_HOSTNAME
+
+
+echo "Your key is authorized with the robot. If you would like to push to GitHub from the robot, you must configure $keypath with your GitHub account."
+echo "GitHub instructions: https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/"
+echo "Press enter to test GitHub access, or Control-C to exit"
+read -n 1
+ssh -o IdentitiesOnly=yes -i "$keypath" git@github.com

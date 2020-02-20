@@ -2,5 +2,6 @@
 . "$SOURCES_ROOT/../config/env.sh"
 . "$SOURCES_ROOT/common/util.bash"
 . "$SOURCES_ROOT/common/modes.bash"
+. "$SOURCES_ROOT/client/ssh.sh"
 
 sim_mode

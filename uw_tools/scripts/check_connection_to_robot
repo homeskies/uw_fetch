@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+###
+# Check connectivity with robot with ping and
+# with a port access. Note that this relies on a nc listener daemon
+# being open on port 1234 on the HSR.
+###
+exit_code=0
+
+# Resolves a hostname, and pings it upon success
+function resolve_and_ping {
+    resolved="$(getent hosts $1)"
+    exit_code=$?
+    resolved="$(echo $resolved | awk '{ print $1 }')"
+    exit_code=$(( $exit_code + $? ))
+    if [[ $exit_code != 0 ]]; then
+        >&2 echo "  Could not resolve hostname $1"
+        return $exit_code
+    else
+        echo "  Resolved $1 as $resolved"
+    fi
+
+    ping -c 2 $1 &> /dev/null
+    exit_code=$?
+    if [[ $exit_code != 0 ]]; then
+        >&2 echo "  Failed to ping $1"
+        return $exit_code
+    fi
+}
+
+# Can we connect to the open internet?
+echo "Connecting to open internet..."
+resolve_and_ping "google.com"
+if [[ $? != 0 ]]; then exit_code=1; >&2 echo "  Failed"; fi
+
+echo "Connecting to $ROBOT_NAME..."
+resolve_and_ping "$ROBOT_HOSTNAME"
+if [[ $? != 0 ]]; then exit_code=1; >&2 echo "  Failed"; fi
+
+# The remaining checks (generally) only work when you're on
+# an unrestricted local network with the robot. If the user
+# only wants a basic remote connectivity check, we can stop here.
+if [[ $1 == "--remote-only" ]]; then
+    if [[ $exit_code == 0 ]]; then
+        echo "All checks passed"
+    fi
+
+    exit $exit_code
+fi
+
+echo "Connecting to robot network beacon..."
+nc -vzt -w 1 -q 1 "$ROBOT_HOSTNAME" 1234 &> /dev/null
+if [[ $? != 0 ]]; then
+    exit_code=1
+    >&2 echo "Failed to contact network beacon at $ROBOT_HOSTNAME. It may not be running, or your network may be blocking traffic to ROS ports."
+else
+    echo "    Connected"
+fi
+
+if [[ $exit_code == 0 ]]; then
+    echo "All checks passed"
+fi
+
+exit $exit_code
