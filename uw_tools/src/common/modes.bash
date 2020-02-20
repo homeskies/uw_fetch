@@ -55,7 +55,7 @@ function sim_mode {
     PS1="\[\033[41;1;37m\]lcl \$UW_TOOLS_PROMPT_ROS_STATUS\[\033[0m\]\w "
 }
 
-function robot_mode {
+function robot-mode {
     if [[ "$UW_TOOLS_MODE" == "none" ]]; then
         export original_PROMPT_COMMAND="$PROMPT_COMMAND"
         export original_PS1="$PS1"
@@ -69,7 +69,7 @@ function robot_mode {
     PS1="\[\033[44;1;37m\]\${ROBOT_NAME:0:3} \$UW_TOOLS_PROMPT_ROS_STATUS\[\033[0m\]\w "
 }
 
-function exit_mode {
+function exit-mode {
     export ROS_MASTER_URI="$original_ROS_MASTER_URI"
     export ROS_IP="$original_ROS_IP"
     PS1="$original_PS1"
