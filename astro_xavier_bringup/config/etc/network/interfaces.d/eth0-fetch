@@ -1,0 +1,6 @@
+# Configure a static IP and point traffic through the Fetch's
+# main computer
+iface eth0 inet static
+  address 10.42.42.2
+  gateway 10.42.42.1
+  dns-search cs.washington.edu
