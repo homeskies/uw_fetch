@@ -39,7 +39,7 @@ function __prompt_command {
     UW_TOOLS_PROMPT_ROS_STATUS=$(get_ros_status)
 }
 
-function sim_mode {
+function sim-mode {
     if [[ "$UW_TOOLS_MODE" == "none" ]]; then
         export original_PROMPT_COMMAND="$PROMPT_COMMAND"
         export original_PS1="$PS1"
