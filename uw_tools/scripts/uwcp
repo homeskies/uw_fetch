@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+###
+# Copies a given path onto the robot
+###
+
+readonly PROGNAME=$(basename $0)
+delete_remote="false"
+exclude_common="false"
+
+function usage {
+cat <<- EOF
+Usage: $PROGNAME [options] source... remote_dest
+Options:
+    -e --exclude-common   Exclude common editor files, build paths, and git folders
+    -d --delete--extra    Delete files on the remote that are not in the local path
+    -r --replace-dest
+    -u --user             The username with which to connect to the remote host
+    -h --hostname         The hostname to use to connect to the remote host
+EOF
+    exit 1
+}
+
+# If no argument was passed, print usage
+if [ ${#@} == 0 ]; then
+    usage
+    exit 1
+fi
+
+remote_user=$ROBOT_USERNAME
+hostname="$ROBOT_HOSTNAME"
+declare -a positional_args
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+        -e|--exclude-common)
+            exclude_common="true"
+        ;;
+        -d|--delete-extra)
+            delete_extra="true"
+        ;;
+        -r|--replace-dest)
+            replace_dest="true"
+        ;;
+        -n|--no-progress)
+            no_progress="true"
+        ;;
+        -u|--user)
+            shift
+            remote_user="$1"
+        ;;
+        -h|--hostname)
+            shift
+            hostname="$1"
+        ;;
+        --)
+            shift
+            args="$@"
+            # End the while loop
+            break
+        ;;
+        *)
+           positional_args+=("$key")
+        ;;
+    esac
+    shift # move past argument
+done
+
+num_args=${#positional_args[@]}
+
+if (( $num_args < 2 )); then
+    usage
+    exit 1
+fi
+local_paths="${positional_args[@]::${num_args}-1}"
+remote_path="${positional_args[-1]}"
+
+
+echo "$local_paths -> $remote_path (as $remote_user)"
+
+if [[ "$exclude_common" == "true" ]]; then
+    # FIXME: Tilde exclude doesn't work
+    args=$args' --exclude .git --exclude "*~" --exclude .idea --exclude cmake-build-debug'
+fi
+if [[ "$replace_dest" == "true" ]]; then
+    args=$args" --delete"
+fi
+if [[ "$delete_extra" == "true" ]]; then
+    args=$args" --delete"
+fi
+if [[ "$no_progress" != "true" ]]; then
+    args=$args" --info=progress2"
+fi
+
+
+# Copy files to the robot
+rsync -haz "$local_paths" "$remote_user@$hostname:$remote_path" $args

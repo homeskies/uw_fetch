@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+. "$SOURCES_ROOT/common/util.bash"
+. "$SOURCES_ROOT/common/modes.bash"
+. "$SOURCES_ROOT/client/ssh.sh"
+
+sim-mode

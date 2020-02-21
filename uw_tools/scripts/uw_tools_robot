@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+. "$SOURCES_ROOT/common/util.bash"
+. "$SOURCES_ROOT/common/modes.bash"
+. "$SOURCES_ROOT/robot/env.sh"
+. "$SOURCES_ROOT/robot/welcome.sh"
