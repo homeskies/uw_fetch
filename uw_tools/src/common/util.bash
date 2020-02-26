@@ -10,7 +10,7 @@ function get_ip(){
   fi
   network_if="$1"
 
-  target_ip=$(LANG=C ip addr show "$network_if" | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*') &> /dev/null
+  target_ip=$(LANG=C ip addr show | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*.*en.*' | grep -Eo '([0-9]*\.){3}[0-9]*' | head -1 ) &> /dev/null
   # We may get degenerate strings back. Filter them out
   if [[ "${#target_ip}" -le 5 ]] ; then
       return 1
