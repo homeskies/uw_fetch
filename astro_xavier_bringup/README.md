@@ -1,5 +1,6 @@
 # astro_xavier_bringup
 
+Launch files and system configuration for the Xavier installed on Astro's head.
 
 ## Installation
 
@@ -10,7 +11,7 @@
 
 ### On Fetch
 
-Configure connection sharing. Recommend using iptables-persist
+iptables rules for connection sharing are stored in `uw_fetch_bringup`.
 
 ### On Xavier
 
