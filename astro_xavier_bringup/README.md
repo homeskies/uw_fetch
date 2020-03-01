@@ -21,8 +21,13 @@ iptables rules for connection sharing are stored in `uw_fetch_bringup`.
     # Modify or comment out NVidia login logo
     vi .xsessionrc
     
-    # Prepare ros user
+    # Prepare main user (for development)
+    # Give access to sound devices
+    sudo usermod -a -G dialout $USER
+    
+    # Prepare ros user (for default launch)
     sudo adduser --system --no-create-home --group ros
+    sudo usermod -a -G dialout ros
     sudo chsh ros /bin/bash
     # Recommended location for "ros" user's workspace, if any
     sudo mkdir -p /var/ros
