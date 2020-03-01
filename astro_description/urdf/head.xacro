@@ -296,9 +296,9 @@
         </joint>
 
         <xacro:arg name="use_nominal_extrinsics" default="true"/>
-        <sensor_d415 name="head_external_camera" parent="head_external_camera_mount">
+        <xacro:sensor_d415 name="head_external_camera" parent="head_external_camera_mount">
             <origin xyz="0.025 -0.025 0.003" rpy="0 0 0"/>
-        </sensor_d415>
+        </xacro:sensor_d415>
 
 
         <link name="head_mic_mount">

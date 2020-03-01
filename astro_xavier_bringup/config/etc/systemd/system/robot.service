@@ -1,0 +1,17 @@
+[Unit]
+Description=Job that launches basic camera drivers once the machine has started
+After=multi-user.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Environment="ROS_LOG_DIR=/var/log/ros ROS_MASTER_URI=http://astro.local:11311"
+Restart=on-failure
+StandardOutput=file:/var/log/ros/robot.log
+StandardError=file:/var/log/ros/robot.log
+
+User=ros
+ExecStartPre=+/usr/sbin/logrotate /etc/logrotate.d/robot -f
+ExecStartPre=+/bin/bash -c "chown ros:ros -R /var/log/ros"
+ExecStart=/bin/bash -c ". /opt/ros/melodic/setup.bash && roslaunch /etc/ros/melodic/robot.launch --wait"
