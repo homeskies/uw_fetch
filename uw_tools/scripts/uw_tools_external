@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+. "$SOURCES_ROOT/common/util.bash"
+. "$SOURCES_ROOT/common/modes.bash"
+. "$SOURCES_ROOT/external/env.sh"
+. "$SOURCES_ROOT/external/welcome.sh"
