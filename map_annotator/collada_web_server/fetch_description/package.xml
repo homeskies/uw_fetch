@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>astro_description</name>
+  <version>0.1.0</version>
+  <description>
+    URDF for UW's Astro Fetch Robot.
+  </description>
+
+  <maintainer email="robocup@cs.washington.edu">UW RoboCup Contributors</maintainer>
+  <author email="robocup@cs.washington.edu">UW RoboCup Contributors</author>
+
+  <license>CreativeCommons-Attribution-NonCommercial-ShareAlike-4.0-International</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roslaunch</build_depend>
+
+  <exec_depend>fetch_description</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>realsense2_description</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>rviz</exec_depend>
+  <exec_depend>urdf</exec_depend>
+  <exec_depend>xacro</exec_depend>
+</package>
