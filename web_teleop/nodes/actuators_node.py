@@ -6,7 +6,8 @@ from web_teleop.srv import SetTorso, SetTorsoResponse
 from web_teleop.srv import OpenGripper, OpenGripperResponse, CloseGripper, CloseGripperResponse
 from web_teleop.srv import SetArm, SetArmResponse
 from web_teleop.srv import MoveHead, MoveHeadResponse
-from fetch_api import ArmJoints 
+from fetch_api import ArmJoints
+
 
 def wait_for_time():
     """Wait for simulated time to begin.
@@ -42,7 +43,6 @@ class ActuatorServer(object):
     def move_head(self, request):
         self._head.pan_tilt(request.xv, request.yv)
         return MoveHeadResponse()
-
 
 
 def main():

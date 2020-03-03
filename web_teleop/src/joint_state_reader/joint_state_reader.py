@@ -3,6 +3,7 @@
 import rospy
 import sensor_msgs.msg
 
+
 class JointStateReader(object):
     """Listens to /joint_states and provides the latest joint angles.
 
@@ -12,6 +13,7 @@ class JointStateReader(object):
         joint_reader.get_joint('shoulder_pan_joint')
         joint_reader.get_joints(['shoulder_pan_joint', 'shoulder_lift_joint'])
     """
+
     def __init__(self):
         self._subs = rospy.Subscriber('joint_states', sensor_msgs.msg.JointState, self.callback)
         self._joint_values = {}
@@ -40,7 +42,7 @@ class JointStateReader(object):
         Args:
             name: list of strings, the names of the joints whose values we want
                 to read.
-                                                                                
+
         Returns: A list of the joint values. Values may be None if we do not
             have a value for that joint yet.
         """
