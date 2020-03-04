@@ -49,11 +49,11 @@ def main():
     rospy.init_node('web_teleop_actuators')
     wait_for_time()
     server = ActuatorServer()
-    torso_service = rospy.Service('web_teleop/set_torso', SetTorso, server.handle_set_torso)
-    open_gripper_service = rospy.Service('web_teleop/open_gripper', OpenGripper, server.open_gripper)
-    close_gripper_service = rospy.Service('web_teleop/close_gripper', CloseGripper, server.close_gripper)
-    set_arm_service = rospy.Service('web_teleop/set_arm', SetArm, server.set_arm)
-    move_head_service = rospy.Service('web_teleop/move_head', MoveHead, server.move_head)
+    torso_service = rospy.Service('web_teleop/set_torso', SetTorso, server.handle_set_torso)  # noqa: F841
+    open_gripper_service = rospy.Service('web_teleop/open_gripper', OpenGripper, server.open_gripper)  # noqa: F841
+    close_gripper_service = rospy.Service('web_teleop/close_gripper', CloseGripper, server.close_gripper)  # noqa: F841
+    set_arm_service = rospy.Service('web_teleop/set_arm', SetArm, server.set_arm)  # noqa: F841
+    move_head_service = rospy.Service('web_teleop/move_head', MoveHead, server.move_head)  # noqa: F841
     rospy.spin()
 
 
