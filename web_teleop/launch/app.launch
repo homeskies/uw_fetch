@@ -1,5 +1,17 @@
 <launch>
   <include file="$(find uw_gazebo)/launch/house_simulation.launch" />
+
+  <arg name="rviz" default="true"/>
+  <arg name="map_file" default="$(find uw_gazebo)/maps/house/map.yaml"/>
+
+  <include file="$(find uw_fetch_bringup)/launch/navigation.launch">
+    <arg name="initial_pose_x" value="3.5"/>
+    <arg name="initial_pose_y" value="1.0"/>
+    <arg name="map_file" value="$(arg map_file)"/>
+  </include>
+
+  <node if="$(arg rviz)" name="rviz" type="rviz" pkg="rviz" args="--display-config $(find uw_fetch_bringup)/config/fetch.rviz" />
+
   <node pkg="web_teleop" type="actuators_node.py" name="web_teleop_actuators" />
   <node pkg="web_teleop" type="joint_state_republisher.py" name="joint_state_republisher" />
 </launch>
