@@ -4,10 +4,8 @@ project(web_teleop)
 find_package(catkin REQUIRED COMPONENTS
   fetch_api
   message_generation
-  rosbridge_server
   roscpp
   rospy
-  web_video_server
 )
 
 catkin_python_setup()
