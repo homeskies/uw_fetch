@@ -1,7 +1,4 @@
 <launch>
-  <arg name="simulation" default="true"/>
-  <!-- For Simulation -->
-  <include file="$(find uw_gazebo)/launch/house_simulation.launch" if="$(arg simulation)"/>
 
   <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
 

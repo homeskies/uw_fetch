@@ -1,0 +1,7 @@
+<launch>
+
+  <!-- For Simulation -->
+  <include file="$(find uw_gazebo)/launch/house_simulation.launch" />
+  <include file="$(find web_teleop)/launch/standalone.launch"/>
+
+</launch>
