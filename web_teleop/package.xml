@@ -16,9 +16,11 @@
   <build_export_depend>rospy</build_export_depend>
   <build_export_depend>message_runtime</build_export_depend>
   <exec_depend>fetch_api</exec_depend>
+  <exec_depend>rosbridge_server</exec_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>message_runtime</exec_depend>
+  <exec_depend>web_video_server</exec_depend>
   <test_depend>roslaunch</test_depend>
 
   <export>

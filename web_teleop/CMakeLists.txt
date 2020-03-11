@@ -2,10 +2,12 @@ cmake_minimum_required(VERSION 2.8.3)
 project(web_teleop)
 
 find_package(catkin REQUIRED COMPONENTS
+  fetch_api
   message_generation
+  rosbridge_server
   roscpp
   rospy
-  fetch_api
+  web_video_server
 )
 
 catkin_python_setup()
@@ -34,4 +36,5 @@ include_directories(
 if (CATKIN_ENABLE_TESTING)
   find_package(roslaunch REQUIRED)
   roslaunch_add_file_check(launch/app.launch)
+  roslaunch_add_file_check(launch/standalone.launch)
 endif()
