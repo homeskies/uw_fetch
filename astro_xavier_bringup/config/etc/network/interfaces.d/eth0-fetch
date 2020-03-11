@@ -1,0 +1,10 @@
+# Configure a static IP and point traffic through the Fetch's
+# main computer
+iface eth0 inet static
+  address 10.42.42.2
+  gateway 10.42.42.1
+  # Only the 10.42.42.x subnet is routable within the robot.
+  # CSE uses 10.x.x.x for machines in the building, so we've got to let
+  # packets outside Fetch internal range get out via the default route
+  netmask 255.255.255.0
+  dns-search cs.washington.edu

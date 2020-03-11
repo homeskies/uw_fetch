@@ -1,0 +1,18 @@
+# Local config
+"[Interface]
+PrivateKey = $CLIENT_PRIVATE_KEY
+Address = $IP_ADDR
+
+[Peer]
+Publickey = $SERVER_PUBLIC_KEY
+Endpoint = $ROBOT_HOSTNAME:51280
+AllowedIPs = 10.43.43.0/24,10.42.42.0/24"
+
+# This script would have to
+#  * Generate new local private/public keys
+#  * SSH into robot, count num existing peers in /etc/wireguard/wg0.conf (sudo wg show | grep peer | wc -l)
+#  * Set IP_ADDR to 10.43.43.#peers
+#  * SSH into robot, copy SERVER_PUBLIC_KEY from (sudo wg show wg0 public-key)
+#  * Save config locally
+#  * SSH into robot, add remote config (sudo wg set wg0 peer $CLIENT_PUBLIC_KEY allowed-ips $IP_ADDR)
+

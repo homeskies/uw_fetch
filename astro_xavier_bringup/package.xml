@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>astro_xavier_bringup</name>
+  <version>0.1.0</version>
+  <description>Launch files and configuration for Astro's Xavier</description>
+
+  <license>BSD</license>
+
+  <maintainer email="robocup@cs.washington.edu">UW RoboCup Contributors</maintainer>
+  <author email="robocup@cs.washington.edu">UW RoboCup Contributors</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+
+  <exec_depend>chromium-browser</exec_depend>
+  <exec_depend>fake_localization</exec_depend>
+  <test_depend>roslaunch</test_depend>
+</package>
