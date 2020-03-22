@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 . "$SOURCES_ROOT/common/util.bash"
-. "$SOURCES_ROOT/common/modes.bash"
+case "$UW_TOOLS_SHELL_FLAVOR" in
+    zsh) source "$SOURCES_ROOT/common/modes.zsh";;
+    bash) source "$SOURCES_ROOT/common/modes.bash";;
+esac
 . "$SOURCES_ROOT/client/ssh.sh"
 
 sim-mode

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/env/zsh
 ###
 # Custom shell modes that control the current ROS master
 ##
@@ -6,14 +6,13 @@
 # If no mode is set, set it to none. Otherwise, keep the current mode
 export UW_TOOLS_MODE=${UW_TOOLS_MODE:-"none"}
 
-function __prompt_command {
+function __ros_prompt {
     UW_TOOLS_PROMPT_ROS_STATUS=$(get_ros_status)
 }
 
 function sim-mode {
     if [[ "$UW_TOOLS_MODE" == "none" ]]; then
-        export original_PROMPT_COMMAND="$PROMPT_COMMAND"
-        export original_PS1="$PS1"
+        export original_PROMPT=$PROMPT
         export original_ROS_MASTER_URI="$ROS_MASTER_URI"
         export original_ROS_IP="$ROS_IP"
     fi
@@ -21,28 +20,28 @@ function sim-mode {
     export ROS_MASTER_URI=http://localhost:11311
     set_rosip lo
     export UW_TOOLS_MODE="sim"
-    PROMPT_COMMAND=__prompt_command
-    PS1="\[\033[41;1;37m\]lcl \$UW_TOOLS_PROMPT_ROS_STATUS\[\033[0m\]\w "
+    precmd_functions=("${(@)precmd_functions:#__ros_prompt}")
+    precmd_functions+=__ros_prompt
+    PROMPT="%{$fg[red]%}lcl \$UW_TOOLS_PROMPT_ROS_STATUS%{$reset_color%} "$original_PROMPT
 }
 
 function robot-mode {
     if [[ "$UW_TOOLS_MODE" == "none" ]]; then
-        export original_PROMPT_COMMAND="$PROMPT_COMMAND"
-        export original_PS1="$PS1"
+        export original_PROMPT=$PROMPT
         export original_ROS_MASTER_URI="$ROS_MASTER_URI"
         export original_ROS_IP="$ROS_IP"
     fi
     export ROS_MASTER_URI="http://$ROBOT_HOSTNAME:11311"
     set_rosip eno1
     export UW_TOOLS_MODE="robot"
-    PROMPT_COMMAND=__prompt_command
-    PS1="\[\033[44;1;37m\]\${ROBOT_NAME:0:3} \$UW_TOOLS_PROMPT_ROS_STATUS\[\033[0m\]\w "
+    precmd_functions+=__ros_prompt
+    PROMPT="%{$fg[blue]%}\${ROBOT_NAME:0:3}  \$UW_TOOLS_PROMPT_ROS_STATUS%{$reset_color%} "$original_PROMPT
 }
 
 function exit-mode {
     export ROS_MASTER_URI="$original_ROS_MASTER_URI"
     export ROS_IP="$original_ROS_IP"
-    PS1="$original_PS1"
-    PROMPT_COMMAND="$original_PROMPT_COMMAND"
+    PROMPT="$original_PROMPT"
+    precmd_functions=("${(@)precmd_functions:#__ros_prompt}")
     export UW_TOOLS_MODE="none"
 }

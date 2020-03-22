@@ -1,5 +1,5 @@
 # generated from uw_tools/env-hooks/uw_tools.bash
-
+export UW_TOOLS_SHELL_FLAVOR=bash
 @[if DEVELSPACE]@
 . @(CMAKE_CURRENT_SOURCE_DIR)/config/env.sh
 export SOURCES_ROOT="@(CMAKE_CURRENT_SOURCE_DIR)/src"
