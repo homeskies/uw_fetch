@@ -48,7 +48,7 @@ TrajectoryPlannerROS:
   publish_cost_grid_pc: false
 
 # Base profile
-TrajectoryPlannerROS:
+
   acc_lim_x: 0.35
   acc_lim_y: 0.0
   acc_lim_theta: 0.8
