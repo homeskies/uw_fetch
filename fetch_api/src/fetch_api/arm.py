@@ -5,7 +5,7 @@ import control_msgs.msg
 import trajectory_msgs.msg
 import rospy
 import tf
-
+from moveit_python import (MoveGroupInterface)
 from .arm_joints import ArmJoints
 from .moveit_goal_builder import MoveItGoalBuilder
 from moveit_msgs.msg import MoveItErrorCodes, MoveGroupAction
@@ -76,6 +76,7 @@ class Arm(object):
         self._move_group_client.wait_for_server(rospy.Duration(10))
         self._compute_ik = rospy.ServiceProxy('compute_ik', GetPositionIK)
         self._tf_listener = TransformListener()
+        self.move_group = MoveGroupInterface(ARM_GROUP_NAME, "base_link")
 
     """
     Tucks arm
