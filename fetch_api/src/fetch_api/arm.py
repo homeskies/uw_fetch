@@ -77,6 +77,18 @@ class Arm(object):
         self._compute_ik = rospy.ServiceProxy('compute_ik', GetPositionIK)
         self._tf_listener = TransformListener()
 
+    """
+    Tucks arm
+    """
+    def tuck(self):
+        joints = ["shoulder_pan_joint", "shoulder_lift_joint", "upperarm_roll_joint",
+                  "elbow_flex_joint", "forearm_roll_joint", "wrist_flex_joint", "wrist_roll_joint"]
+        pose = [1.32, 1.40, -0.2, 1.72, 0.0, 1.66, 0.0]
+        while not rospy.is_shutdown():
+            result = self.move_group.moveToJointPosition(joints, pose, 0.02)
+            if result.error_code.val == MoveItErrorCodes.SUCCESS:
+                return
+
     def move_to_joints(self, joint_state):
         goal = control_msgs.msg.FollowJointTrajectoryGoal()
         goal.trajectory.joint_names.extend(ArmJoints.names())
