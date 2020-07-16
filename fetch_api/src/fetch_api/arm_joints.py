@@ -67,7 +67,8 @@ class ArmJoints(object):
             self.wrist_roll
         ]
 
-    def _clamp_val(self, val, joint_name):
+    @staticmethod
+    def _clamp_val(val, joint_name):
         if joint_name in ArmJoints.JOINT_LIMITS:
             limits = ArmJoints.JOINT_LIMITS[joint_name]
             min_val, max_val = limits[0], limits[1]

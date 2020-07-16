@@ -5,7 +5,6 @@ import control_msgs.msg
 import trajectory_msgs.msg
 import rospy
 import tf
-from moveit_python import (MoveGroupInterface)
 from .arm_joints import ArmJoints
 from .moveit_goal_builder import MoveItGoalBuilder
 from moveit_msgs.msg import MoveItErrorCodes, MoveGroupAction
@@ -76,21 +75,33 @@ class Arm(object):
         self._move_group_client.wait_for_server(rospy.Duration(10))
         self._compute_ik = rospy.ServiceProxy('compute_ik', GetPositionIK)
         self._tf_listener = TransformListener()
-        self.move_group = MoveGroupInterface(ARM_GROUP_NAME, "base_link")
+        self.tuck_pose = [1.32, 1.40, -0.2, 1.72, 0.0, 1.66, 0.0]
 
-    """
-    Tucks arm
-    """
     def tuck(self):
-        joints = ["shoulder_pan_joint", "shoulder_lift_joint", "upperarm_roll_joint",
-                  "elbow_flex_joint", "forearm_roll_joint", "wrist_flex_joint", "wrist_roll_joint"]
-        pose = [1.32, 1.40, -0.2, 1.72, 0.0, 1.66, 0.0]
-        while not rospy.is_shutdown():
-            result = self.move_group.moveToJointPosition(joints, pose, 0.02)
-            if result.error_code.val == MoveItErrorCodes.SUCCESS:
-                return
+        """
+        Uses motion-planning to tuck the arm within the footprint of the base.
+        :return: a string describing the error, or None if there was no error
+        """
+
+        return self.move_to_joint_goal(zip(ArmJoints.names(), self.tuck_pose))
+
+    def tuck_unsafe(self):
+        """
+        TUCKS BUT DOES NOT PREVENT SELF-COLLISIONS, WHICH ARE HIGHLY LIKELY.
+
+        Don't use this unless you have prior knowledge that the arm can safely return
+        to tucked from its current configuration. Most likely, you should only use this
+        method in simulation, where the arm can clip through the base without issue.
+        :return:
+        """
+        return self.move_to_joints(ArmJoints.from_list(self.tuck_pose))
 
     def move_to_joints(self, joint_state):
+        """
+        Moves to an ArmJoints configuration
+        :param joint_state: an ArmJoints instance to move to
+        :return:
+        """
         goal = control_msgs.msg.FollowJointTrajectoryGoal()
         goal.trajectory.joint_names.extend(ArmJoints.names())
         point = trajectory_msgs.msg.JointTrajectoryPoint()
@@ -103,7 +114,7 @@ class Arm(object):
     def move_to_joint_goal(self,
                            joints,
                            allowed_planning_time=10.0,
-                           execution_timeout=rospy.Duration(15.0),
+                           execution_timeout=15.0,
                            group_name='arm',
                            num_planning_attempts=1,
                            plan_only=False,
