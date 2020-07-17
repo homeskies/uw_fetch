@@ -25,7 +25,7 @@ LOGO = r"""
 
 import rospy
 import fetch_api
-from fetch_api import Arm, Base, Gripper, Head, Torso
+from fetch_api import Arm, Base, Gripper, Head, Torso, ArmJoints
 rospy.init_node("ifetch", anonymous=True)
 
 arm = Arm()

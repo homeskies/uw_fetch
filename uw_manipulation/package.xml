@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>uw_manipulation</name>
+  <version>0.1.0</version>
+  <description>small API for fetch preception and grasping.</description>
+  <maintainer email="robocup@cs.washington.edu">UW RoboCup Contributors</maintainer>
+  <!-- Intial implementation from Michael Ferguson's grasping demo --> 
+  <author>Michael Ferguson</author>
+  <license>MIT</license>
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roslint</build_depend>
+
+  <exec_depend>actionlib</exec_depend>
+  <exec_depend>control_msgs</exec_depend>
+  <exec_depend>grasping_msgs</exec_depend>
+  <exec_depend>move_base</exec_depend>
+  <exec_depend>simple_grasping</exec_depend>
+  <exec_depend>trajectory_msgs</exec_depend>
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>rospy</exec_depend>
+
+  <export>
+  </export>
+</package>
