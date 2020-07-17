@@ -13,7 +13,9 @@
 
   <exec_depend>actionlib</exec_depend>
   <exec_depend>control_msgs</exec_depend>
+  <exec_depend>grasping_msgs</exec_depend>
   <exec_depend>move_base</exec_depend>
+  <exec_depend>simple_grasping</exec_depend>
   <exec_depend>trajectory_msgs</exec_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>

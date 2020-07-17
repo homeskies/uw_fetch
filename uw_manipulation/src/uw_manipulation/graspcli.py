@@ -2,9 +2,7 @@ import copy
 import actionlib
 import rospy
 
-from moveit_python import (MoveGroupInterface,
-                           PlanningSceneInterface,
-                           PickPlaceInterface)
+from moveit_python import PlanningSceneInterface, PickPlaceInterface
 from moveit_python.geometry import rotate_pose_msg_by_euler_angles
 from grasping_msgs.msg import FindGraspableObjectsAction, FindGraspableObjectsGoal
 # from geometry_msgs.msg import PoseStamped
@@ -15,18 +13,15 @@ from moveit_msgs.msg import PlaceLocation
 class GraspingClient(object):
 
     def __init__(self):
-        rospy.loginfo("Grasping Client for demo purposes")
-        rospy.loginfo("If your script hangs here it is likely you did not runt the task_storing_groceries script")
         self.scene = PlanningSceneInterface("base_link")
         self.pickplace = PickPlaceInterface("arm", "gripper", verbose=True)
-        self.move_group = MoveGroupInterface("arm", "base_link")
 
         find_topic = "basic_grasping_perception/find_objects"
         rospy.loginfo("Waiting for %s..." % find_topic)
         self.find_client = actionlib.SimpleActionClient(find_topic, FindGraspableObjectsAction)
         self.find_client.wait_for_server()
 
-    def updateScene(self):
+    def update_scene(self):
         # find objects
         goal = FindGraspableObjectsGoal()
         goal.plan_grasps = True
@@ -57,7 +52,7 @@ class GraspingClient(object):
             obj.primitives[0].dimensions = [obj.primitives[0].dimensions[0],
                                             1.5,  # wider
                                             obj.primitives[0].dimensions[2] + height]
-            obj.primitive_poses[0].position.z += -height/2.0
+            obj.primitive_poses[0].position.z += -height / 2.0
 
             # add to scene
             self.scene.addSolidPrimitive(obj.name,
@@ -71,7 +66,7 @@ class GraspingClient(object):
         self.objects = find_result.objects
         self.surfaces = find_result.support_surfaces
 
-    def getGraspableCube(self):
+    def get_graspable_cube(self):
         # graspable = None
         for obj in self.objects:
             # self.getCokeReference(obj)
@@ -86,11 +81,11 @@ class GraspingClient(object):
             # print(obj.object.primitives[0].dimensions[1])
             # print(obj.object.primitives[0].dimensions[2])
             if obj.object.primitives[0].dimensions[0] < 0.02 or \
-               obj.object.primitives[0].dimensions[0] > 0.14 or \
-               obj.object.primitives[0].dimensions[0] < 0.02 or \
-               obj.object.primitives[0].dimensions[0] > 0.14 or \
-               obj.object.primitives[0].dimensions[0] < 0.02 or \
-               obj.object.primitives[0].dimensions[0] > 0.14:
+                    obj.object.primitives[0].dimensions[0] > 0.14 or \
+                    obj.object.primitives[0].dimensions[0] < 0.02 or \
+                    obj.object.primitives[0].dimensions[0] > 0.14 or \
+                    obj.object.primitives[0].dimensions[0] < 0.02 or \
+                    obj.object.primitives[0].dimensions[0] > 0.14:
                 continue
             # has to be on table
             print("z")
@@ -111,13 +106,13 @@ class GraspingClient(object):
     #                                    rospy.Duration(1.0)) #wait for 1 second
     #     pose_transformed = do_transform_pose(pose_stamped, transform)
     #     print pose_transformed
-    def getSupportSurface(self, name):
+    def get_support_surface(self, name):
         for surface in self.support_surfaces:
             if surface.name == name:
                 return surface
         return None
 
-    def getPlaceLocation(self):
+    def get_place_location(self):
         pass
 
     def pick(self, block, grasps):
@@ -142,7 +137,7 @@ class GraspingClient(object):
         # create another several places, rotate each by 360/m degrees in yaw direction
         m = 16  # number of possible place poses
         pi = 3.141592653589
-        for i in range(0, m-1):
+        for i in range(0, m - 1):
             location.place_pose.pose = rotate_pose_msg_by_euler_angles(location.place_pose.pose, 0, 0, 2 * pi / m)
             places.append(copy.deepcopy(location))
 
