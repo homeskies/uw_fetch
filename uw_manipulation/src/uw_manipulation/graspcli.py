@@ -19,7 +19,7 @@ class GraspingClient(object):
         find_topic = "basic_grasping_perception/find_objects"
         rospy.loginfo("Waiting for %s..." % find_topic)
         self.find_client = actionlib.SimpleActionClient(find_topic, FindGraspableObjectsAction)
-        self.find_client.wait_for_server()
+        self.find_client.wait_for_server(rospy.Duration(5))
 
     def update_scene(self):
         # find objects
@@ -66,46 +66,38 @@ class GraspingClient(object):
         self.objects = find_result.objects
         self.surfaces = find_result.support_surfaces
 
-    def get_graspable_cube(self):
+    def select_graspable_object(self):
         # graspable = None
         for obj in self.objects:
-            # self.getCokeReference(obj)
             # need grasps
             if len(obj.grasps) < 1:
                 continue
+            # print obj.object.primitives
             # check size
-            print("dims")
-            for i in obj.object.primitives[0].dimensions:
-                print(i)
-            # print(obj.object.primitives[0].dimensions[0])
-            # print(obj.object.primitives[0].dimensions[1])
-            # print(obj.object.primitives[0].dimensions[2])
-            if obj.object.primitives[0].dimensions[0] < 0.02 or \
-                    obj.object.primitives[0].dimensions[0] > 0.14 or \
-                    obj.object.primitives[0].dimensions[0] < 0.02 or \
-                    obj.object.primitives[0].dimensions[0] > 0.14 or \
-                    obj.object.primitives[0].dimensions[0] < 0.02 or \
-                    obj.object.primitives[0].dimensions[0] > 0.14:
-                continue
+            # print("dims")
+            # for i in obj.object.primitives[0].dimensions:
+            #    print(i)
+            if obj.object.primitives[0].type == 3:
+                # Cylinder
+                pass
+            elif obj.object.primitives[0].type == 1:
+                # Box
+                if obj.object.primitives[0].dimensions[0] < 0.02 or \
+                        obj.object.primitives[0].dimensions[0] > 0.14 or \
+                        obj.object.primitives[0].dimensions[1] < 0.02 or \
+                        obj.object.primitives[0].dimensions[1] > 0.14 or \
+                        obj.object.primitives[0].dimensions[2] < 0.02 or \
+                        obj.object.primitives[0].dimensions[2] > 0.14:
+                    continue
             # has to be on table
-            print("z")
-            print(obj.object.primitive_poses[0].position.z)
+            # print("z")
+            # print(obj.object.primitive_poses[0].position.z)
             if obj.object.primitive_poses[0].position.z < 0.2:
                 continue
             return obj.object, obj.grasps
         # nothing detected
         return None, None
 
-    # def getCokeReference(self, obj):
-    #     pose = obj.object.primitive_poses[0]
-    #     pose_stamped = PoseStamped()
-    #     pose_stamped.pose = pose
-    #     transform = tf_buffer.lookup_transform("map",
-    #                                    "head_camera_link", #source frame
-    #                                    rospy.Time(0), #get the tf at first available time
-    #                                    rospy.Duration(1.0)) #wait for 1 second
-    #     pose_transformed = do_transform_pose(pose_stamped, transform)
-    #     print pose_transformed
     def get_support_surface(self, name):
         for surface in self.support_surfaces:
             if surface.name == name:
